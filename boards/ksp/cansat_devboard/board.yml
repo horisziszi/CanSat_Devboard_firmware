@@ -1,0 +1,6 @@
+board:
+  name: cansat_devboard
+  full_name: cansat_devboard
+  vendor: ksp
+  socs:
+    - name: nrf52840

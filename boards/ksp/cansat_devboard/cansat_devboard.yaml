@@ -1,0 +1,18 @@
+identifier: cansat_devboard/nrf52840
+name: Development board to test sd card, lora, and nrf apis under zephyr
+vendor: ksp
+type: mcu
+arch: arm
+ram: 256
+flash: 1024
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - gpio
+  - pwm
+  - sensor
+  - spi
+  - i2c
+  - usb_device

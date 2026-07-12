@@ -1,0 +1,149 @@
+/dts-v1/;
+
+#include <nordic/nrf52840_qiaa.dtsi>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include "cansat_devboard-pinctrl.dtsi"
+
+/ {
+	model = "Development board to test sd card, lora, and nrf apis under zephyr";
+	compatible = "ksp,cansat-devboard";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+// SX1262 LoRa radio
+&spi2 {
+	status = "okay";
+	cs-gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi2_default>;
+	pinctrl-1 = <&spi2_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	sx1262: lora@0 {
+		compatible = "semtech,sx1262";
+		reg = <0x0>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+		status = "okay";
+		reset-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
+		busy-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		dio1-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+// microSD card over SPI
+&spi3 {
+	status = "okay";
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	sdhc0: sdhc@0 {
+		compatible = "zephyr,sdhc-spi-slot";
+		reg = <0x0>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+		status = "okay";
+
+		mmc: mmc {
+			compatible = "zephyr,sdmmc-disk";
+			disk-name = "SD";
+			status = "okay";
+		};
+	};
+};
+
+// nPM1300 battery-management IC
+&i2c0 {
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	npm1300: pmic@6b {
+		compatible = "nordic,npm1300";
+		reg = <0x6b>;
+		status = "okay";
+		host-int-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+		/* The PMIC interrupt output is GPIO3. */
+		pmic-int-pin = <3>;
+		wakeup-source;
+
+		regulators {
+			compatible = "nordic,npm1300-regulator";
+
+			buck1: BUCK1 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <3300000>;
+			};
+
+			buck2: BUCK2 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <3300000>;
+			};
+
+			ldo1: LDO1 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <3300000>;
+			};
+
+			ldo2: LDO2 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <3300000>;
+			};
+		};
+	};
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0xc000 DT_SIZE_K(472)>;
+		};
+
+		slot1_partition: partition@82000 {
+			label = "image-1";
+			reg = <0x82000 DT_SIZE_K(472)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0xf8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	status = "okay";
+};
+
+&zephyr_udc0 {
+	board_cdc_acm_uart: board_cdc_acm_uart {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
