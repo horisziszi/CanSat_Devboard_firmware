@@ -67,10 +67,11 @@
 		compatible = "nordic,npm1300";
 		reg = <0x6b>;
 		status = "okay";
-		host-int-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
-		/* The PMIC interrupt output is GPIO3. */
-		pmic-int-pin = <3>;
+		/* PMIC GPIO1 -> host P0.05. */
+		host-int-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+		pmic-int-pin = <1>;
 		wakeup-source;
+
 
 		regulators {
 			compatible = "nordic,npm1300-regulator";
