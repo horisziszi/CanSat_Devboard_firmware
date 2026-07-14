@@ -15,6 +15,19 @@
 		zephyr,console = &board_cdc_acm_uart;
 		zephyr,shell-uart = &board_cdc_acm_uart;
 	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		sw0: sw0 {
+			gpios = <&gpio0 6 0>;
+			label = "sw0";
+		};
+	};
+
+	zephyr,user {
+		rmf-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 // SX1262 LoRa radio
@@ -32,7 +45,7 @@
 		status = "okay";
 		reset-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
 		busy-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
-		dio1-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		dio1-gpios = <&gpio0 26 0>;
 	};
 };
 
@@ -73,7 +86,6 @@
 		host-int-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
 		pmic-int-pin = <1>;
 		wakeup-source;
-
 
 		regulators {
 			compatible = "nordic,npm1300-regulator";
