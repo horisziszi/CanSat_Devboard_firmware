@@ -71,7 +71,7 @@
 	};
 };
 
-// nPM1300 battery-management IC
+// nPM13xx battery-management IC
 &i2c0 {
 	status = "okay";
 	pinctrl-0 = <&i2c0_default>;
@@ -87,7 +87,7 @@
 		pmic-int-pin = <1>;
 		wakeup-source;
 
-		npm1300_charger: charger {
+		npm13xx_charger: charger {
 			compatible = "nordic,npm1304-charger";
 			term-microvolt = <4200000>;
 			term-warm-microvolt = <4000000>;
