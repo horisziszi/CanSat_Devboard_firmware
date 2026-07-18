@@ -78,46 +78,48 @@
 	pinctrl-1 = <&i2c0_sleep>;
 	pinctrl-names = "default", "sleep";
 
-	npm1300: pmic@6b {
-		compatible = "nordic,npm1300";
+	pmic: pmic@6b {
+		compatible = "nordic,npm1304";
 		reg = <0x6b>;
 		status = "okay";
 		/* PMIC GPIO1 -> host P0.05. */
-		host-int-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+		host-int-gpios = <&gpio0 5 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 		pmic-int-pin = <1>;
 		wakeup-source;
 
 		npm1300_charger: charger {
-			compatible = "nordic,npm1300-charger";
+			compatible = "nordic,npm1304-charger";
 			term-microvolt = <4200000>;
 			term-warm-microvolt = <4000000>;
-			current-microamp = <150000>;
-			dischg-limit-microamp = <1000000>;
-			vbus-limit-microamp = <500000>;
+			current-microamp = <100000>;
+			dischg-limit-microamp = <125000>;
+			vbus-limit-microamp = <1500000>;
 			thermistor-ohms = <10000>;
-			thermistor-beta = <3380>;
+			thermistor-beta = <47000>;
 			charging-enable;
 		};
 
 		regulators {
-			compatible = "nordic,npm1300-regulator";
+			compatible = "nordic,npm1304-regulator";
 
-			buck1: BUCK1 {
-				regulator-min-microvolt = <1000000>;
+			buck1: V3v3 {
+				regulator-min-microvolt = <2700000>;
 				regulator-max-microvolt = <3300000>;
+				regulator-init-microvolt = <3300000>;
+
+				regulator-boot-on;
 			};
 
-			buck2: BUCK2 {
-				regulator-min-microvolt = <1000000>;
+			buck2: VMCU {
+				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
+				regulator-init-microvolt = <3300000>;
+
+				regulator-boot-on;
+				regulator-always-on;
 			};
 
-			ldo1: LDO1 {
-				regulator-min-microvolt = <1000000>;
-				regulator-max-microvolt = <3300000>;
-			};
-
-			ldo2: LDO2 {
+			ldo1: VLDO {
 				regulator-min-microvolt = <1000000>;
 				regulator-max-microvolt = <3300000>;
 			};

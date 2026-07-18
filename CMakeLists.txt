@@ -5,7 +5,5 @@ project(Firmware)
 
 target_sources(app PRIVATE
 	src/main.c
-	src/configure.c
-	src/con/usb-print.c
 	src/hal/battery.c
 )
